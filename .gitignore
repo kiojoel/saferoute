@@ -216,3 +216,26 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/api/bin/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Data (too large for git)
+data/raw/
+data/processed/
+pipeline/models/
+
+# ML artifacts
+*.joblib
+*.pkl
+mlruns/
