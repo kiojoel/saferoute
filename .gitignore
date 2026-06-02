@@ -239,3 +239,7 @@ pipeline/models/
 *.joblib
 *.pkl
 mlruns/
+
+# others
+docs/
+data/
