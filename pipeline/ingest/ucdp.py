@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-"""
-Ingest UCDP conflict events for Nigeria into the conflict_events table.
-Filters out events with location precision 5 or 6 (country centroid or unknown).
-After insertion, runs a spatial join to assign admin_unit_id via point-in-polygon.
-"""
-
 import os
 import sys
 import pandas as pd
@@ -12,7 +5,6 @@ import psycopg2
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
-
 
 db_host = os.getenv("DB_HOST", "localhost")
 db_port = os.getenv("DB_PORT", "5432")
@@ -23,7 +15,6 @@ db_pass = os.getenv("POSTGRES_PASSWORD")
 if not all([db_name, db_user, db_pass]):
     print("ERROR: Missing database credentials in .env")
     sys.exit(1)
-
 
 ucdp_path = os.getenv("UCDP_PATH")
 if not ucdp_path:
@@ -124,7 +115,6 @@ conn.commit()
 print(f"Inserted: {inserted}, Skipped (duplicates): {skipped}")
 
 
-print("Running spatial join to assign LGAs...")
 cur.execute("""
     UPDATE conflict_events ce
     SET admin_unit_id = au.id
@@ -138,7 +128,6 @@ cur.execute("""
 """)
 matched = cur.rowcount
 conn.commit()
-print(f"Spatial join assigned admin_unit_id to {matched} events")
 
 
 cur.execute("""
@@ -149,9 +138,8 @@ unmatched = cur.fetchone()[0]
 print(f"Events without LGA assignment: {unmatched}")
 
 
-print("\n" + "="*50)
+
 print("UCDP Ingestion Summary")
-print("="*50)
 print(f"Total Nigeria events in source:   {total_ng_events}")
 print(f"Filtered out (precision 5,6):     {total_ng_events - filtered_count}")
 print(f"Attempted to insert:               {filtered_count}")
@@ -159,7 +147,7 @@ print(f"Inserted (new):                    {inserted}")
 print(f"Skipped (duplicates):              {skipped}")
 print(f"Spatial join matched:              {matched}")
 print(f"Unmatched (no LGA found):          {unmatched}")
-print("="*50)
+
 
 cur.close()
 conn.close()
