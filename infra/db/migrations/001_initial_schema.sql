@@ -38,6 +38,7 @@ CREATE TABLE conflict_events (
     location_name TEXT,
     latitude      DOUBLE PRECISION NOT NULL,
     longitude     DOUBLE PRECISION NOT NULL,
+    location_precision INTEGER,
     geometry      GEOMETRY(POINT, 4326),
     fatalities    INTEGER NOT NULL DEFAULT 0,
     description   TEXT,

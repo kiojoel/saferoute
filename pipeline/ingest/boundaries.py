@@ -26,7 +26,6 @@ if not all([db_name, db_user, db_pass]):
 
 print(f"Reading LGA boundaries from: {gpkg_path}")
 gdf = gpd.read_file(gpkg_path, layer="ADM_ADM_2", engine="pyogrio")
-print(f"CRS of the data: {gdf.crs}")   # should be EPSG:4326
 
 conn = psycopg2.connect(
     host=db_host,
@@ -41,7 +40,7 @@ cur = conn.cursor()
 cur.execute("SELECT id FROM countries WHERE iso_a3 = 'NGA'")
 row = cur.fetchone()
 if not row:
-    print("ERROR: Nigeria not found in countries table. Did you seed it?")
+    print("ERROR: Nigeria not found in countries table.")
     sys.exit(1)
 country_id = row[0]
 print(f"Nigeria country_id = {country_id}")
@@ -51,7 +50,7 @@ inserted = 0
 for idx, lga in gdf.iterrows():
     code = lga["GID_2"]
     name = lga["NAME_2"]
-    parent_code = lga["GID_1"]   # state code
+    parent_code = lga["GID_1"]
     geom = lga["geometry"]
 
     # Ensure geometry is MultiPolygon (schema requirement)
